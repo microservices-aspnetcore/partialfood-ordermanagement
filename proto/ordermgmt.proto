@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package PartialFoods.Services;
+
+import "partialfoods.proto";
+
+service OrderManagement {
+    rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+    rpc OrderExists(GetOrderRequest) returns (OrderExistsResponse);
+}
+
+message GetOrderRequest {
+    string OrderID = 1;
+}
+
+message GetOrderResponse {
+    string OrderID = 1;
+    uint64 CreatedOn = 2; // UTC milliseconds of time terminal created transaction
+    string UserID = 3; // User ID of the order owner
+    uint32 TaxRate = 4; // Percentage rate of tax, whole numbers because reasons
+
+    ShippingInfo ShippingInfo = 5; // Information on where order is to be shipped
+    repeated LineItem LineItems = 6; // Individual line items on a transaction
+
+    OrderStatus Status = 7;
+}
+
+message OrderExistsResponse {
+    string OrderID = 1;
+    bool Exists = 2;
+}
+
+enum OrderStatus {
+    UNKNOWN = 0;
+    OPEN = 1;
+    CANCELED = 2;
+}

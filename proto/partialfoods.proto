@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package PartialFoods.Services;
+
+service OrderCommand {
+    rpc SubmitOrder(OrderRequest) returns (OrderResponse);
+    rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
+}
+
+message OrderRequest {    
+    uint64 CreatedOn = 1; // UTC milliseconds of time terminal created transaction
+    string UserID = 2; // User ID of the order owner
+    uint32 TaxRate = 3; // Percentage rate of tax, whole numbers because reasons
+
+    ShippingInfo ShippingInfo = 4; // Information on where order is to be shipped
+    repeated LineItem LineItems = 5; // Individual line items on a transaction
+}
+
+message ShippingInfo {
+    string Addressee = 1;
+    repeated string AddressLines = 2;
+    string City = 3;
+    string ZipCode = 4;
+    string StateCode = 5;
+}
+
+message LineItem {
+    string SKU = 1;  // Stock Keeping Unit of inventory item being purchased
+    uint32 UnitPrice = 2; // Price for a single item
+    uint32 Quantity = 3; // Quantity of items purchased
+}
+
+message OrderResponse {
+    string OrderID = 1; // UUID of the order
+    bool Accepted = 2; // Indicates whether the transaction was accepted    
+}
+
+message CancelOrderRequest {
+    string OrderID = 1;
+    string UserID = 2;
+}
+
+message CancelOrderResponse {
+    string OrderID = 1;
+    bool Canceled = 2;
+    string ConfirmationCode = 3;
+}
