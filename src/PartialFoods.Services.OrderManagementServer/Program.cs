@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Threading;
+using Grpc.Reflection;
+using Grpc.Reflection.V1Alpha;
 
 namespace PartialFoods.Services.OrderManagementServer
 {
@@ -59,13 +61,16 @@ namespace PartialFoods.Services.OrderManagementServer
 
             var port = int.Parse(Configuration["service:port"]);
 
+            var refImpl = new ReflectionServiceImpl(
+                ServerReflection.Descriptor, OrderManagement.Descriptor);
             Server server = new Server
             {
-                Services = { OrderManagement.BindService(new OrderManagementImpl(repo)) },
+                Services = { OrderManagement.BindService(new OrderManagementImpl(repo)),
+                             ServerReflection.BindService(refImpl) },
                 Ports = { new ServerPort("localhost", port, ServerCredentials.Insecure) }
             };
             server.Start();
-            logger.LogInformation("Order management RPC service listening on port " + port);
+            logger.LogInformation("Order management gRPC service listening on port " + port);
 
             mre.WaitOne();
 
