@@ -13,7 +13,7 @@ namespace PartialFoods.Services.OrderManagementServer
         [JsonProperty("user_id")]
         public string UserID { get; set; }
 
-        [JsonProperty("activity_id")]
-        public string ActivityID { get; set; }
+        [JsonProperty("event_id")]
+        public string EventID { get; set; }
     }
 }

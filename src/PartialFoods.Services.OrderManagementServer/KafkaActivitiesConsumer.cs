@@ -26,14 +26,20 @@ namespace PartialFoods.Services.OrderManagementServer
             Task.Run(() =>
             {
                 Console.WriteLine($"Starting Kafka subscription to {topic}");
-                using (var consumer = new Consumer<Null, string>(config, null, new StringDeserializer(Encoding.UTF8)))
+                using (var consumer = new Consumer<Ignore, string>(config, null, new StringDeserializer(Encoding.UTF8)))
                 {
-                    //consumer.Assign(new List<TopicPartitionOffset> { new TopicPartitionOffset(topic, 0, 0) });
+                    consumer.OnError += (_, error) =>
+                        Console.WriteLine($"Error: {error}");
+
+                    consumer.OnConsumeError += (_, error) =>
+                        Console.WriteLine($"Consume Error: {error}");
+
+                    // consumer.Assign(new List<TopicPartitionOffset> { new TopicPartitionOffset(topic, 0, 0) });
                     consumer.Subscribe(new[] { topic });
 
                     while (true)
                     {
-                        Message<Null, string> msg;
+                        Message<Ignore, string> msg;
                         if (consumer.Consume(out msg, TimeSpan.FromSeconds(1)))
                         {
                             Console.WriteLine($"Topic: {msg.Topic} Partition: {msg.Partition} Offset: {msg.Offset} {msg.Value}");

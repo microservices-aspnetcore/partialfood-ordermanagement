@@ -20,7 +20,7 @@ namespace PartialFoods.Services.OrderManagementServer
             var result = this.orderRepository.AddActivity(new OrderActivity
             {
                 OccuredOn = (long)orderCanceledEvent.CreatedOn,
-                ActivityID = orderCanceledEvent.ActivityID,
+                ActivityID = orderCanceledEvent.EventID,
                 UserID = orderCanceledEvent.UserID,
                 OrderID = orderCanceledEvent.OrderID,
                 ActivityType = ActivityType.Canceled
